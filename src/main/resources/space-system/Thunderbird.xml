@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SpaceSystem xmlns="http://www.omg.org/space/xtce" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.omg.org/space/xtce http://www.omg.org/space/xtce/SpaceSystemV1.0.xsd"
+	name="Thunderbird" shortDescription="MCS configuration for the Thunderbird rocket">
+
+
+	<Header validationStatus="Working" date="01/03/2011" version="0.1-SNAPSHOT" classification="NotClassified">
+		<AuthorSet>
+			<Author>Mark Doyle - mark.doyle@logica.com</Author>
+			<Author>Johannes Klug - johannes.klug@logica.com</Author>
+		</AuthorSet>
+		<HistorySet>
+			<History>Version 0.1-SNAPSHOT</History>
+		</HistorySet>
+<!--		<NoteSet>-->
+<!--			<Note>XTCE definition for the Thunderbird rocket. This definition is work in progress.</Note>-->
+<!--		</NoteSet>-->
+	</Header>
+
+
+	<!-- Telemetry definition -->
+	<TelemetryMetaData>
+	
+		<ParameterTypeSet>
+			<IntegerParameterType name="1BitFlag" sizeInBits="1" signed="false"
+				shortDescription="1-bit Flagr">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
+			<IntegerParameterType name="2BitUInteger" sizeInBits="2" signed="false"
+				shortDescription="2-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
+			<IntegerParameterType name="3BitUInteger" sizeInBits="3" signed="false"
+				shortDescription="3-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
+			<IntegerParameterType name="8BitUInteger" sizeInBits="8" signed="false"
+				shortDescription="8-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
+			<IntegerParameterType name="11BitUInteger" sizeInBits="11" signed="false"
+				shortDescription="11-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
+			<IntegerParameterType name="14BitUInteger" sizeInBits="14" signed="false"
+				shortDescription="14-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
+			<IntegerParameterType name="16BitUInteger" sizeInBits="16" signed="false"
+				shortDescription="16-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst">-->
+			</IntegerParameterType>
+
+		</ParameterTypeSet>
+
+		<ParameterSet>
+			<Parameter parameterTypeRef="3BitUInteger" name="CCSDS_PKT_VERSION_NUM" />
+			<Parameter parameterTypeRef="1BitFlag" name="CCSDS_PKT_TYPE" />
+			<Parameter parameterTypeRef="1BitFlag" name="CCSDS_PKT_SECOND_HEADER_FLAG" />
+			<Parameter parameterTypeRef="11BitUInteger" name="CCSDS_PKT_APID" />
+			<Parameter parameterTypeRef="2BitUInteger" name="CCSDS_PKT_SEQ_FLAG" />
+			<Parameter parameterTypeRef="14BitUInteger" name="CCSDS_PKT_SEQ_COUNT" />
+			<Parameter parameterTypeRef="16BitUInteger" name="CCSDS_PKT_LENGTH" />
+			<Parameter parameterTypeRef="8BitUInteger" name="RADIO_MODULE_TEMP" />
+		</ParameterSet>
+
+		<ContainerSet>
+			<SequenceContainer name="TMPacket" shortDescription="THUNDERBIRD TM Packet">
+				<EntryList>
+					<ContainerRefEntry containerRef="TMPacketHeader" />
+				</EntryList>
+			</SequenceContainer>
+
+			<SequenceContainer name="TMPacketHeader" shortDescription="THUNDERBIRD TM Packet Header"
+				abstract="true">
+				<EntryList>
+					<ParameterRefEntry parameterRef="CCSDS_PKT_VERSION_NUM" />
+					<ParameterRefEntry parameterRef="CCSDS_PKT_TYPE" />
+					<ParameterRefEntry parameterRef="CCSDS_PKT_SECOND_HEADER_FLAG" />
+					<ParameterRefEntry parameterRef="CCSDS_PKT_APID" />
+					<ParameterRefEntry parameterRef="CCSDS_PKT_SEQ_FLAG" />
+					<ParameterRefEntry parameterRef="CCSDS_PKT_SEQ_COUNT" />
+					<ParameterRefEntry parameterRef="CCSDS_PKT_LENGTH" />
+				</EntryList>
+			</SequenceContainer>
+
+			<SequenceContainer name="RadioModuleTemperature" shortDescription="">
+				<EntryList>
+					<ParameterRefEntry parameterRef="RADIO_MODULE_TEMP" />
+				</EntryList>
+				<BaseContainer containerRef="TMPacketHeader">
+					<RestrictionCriteria>
+						<ComparisonList>
+							<Comparison parameterRef="CCSDS_PKT_APID" value="1" />
+						</ComparisonList>
+					</RestrictionCriteria>
+				</BaseContainer>
+
+			</SequenceContainer>			
+			
+		</ContainerSet>
+
+	</TelemetryMetaData>
+
+</SpaceSystem>

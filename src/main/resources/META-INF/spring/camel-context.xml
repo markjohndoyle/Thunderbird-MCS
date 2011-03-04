@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configures the MCS using camel as a routing engine -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       					   http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<!--Config property variables for Camel -->
+	<bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
+		<property name="location" value="classpath:config/configuration.properties" />
+	</bean>
+	<!-- For Spring -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:config/configuration.properties">
+		</property>
+	</bean>
+
+	<!--Set up the active mq broker bean -->
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+		<property name="brokerURL" value="${activemq.broker.url}" />
+	</bean>
+
+	<bean id="thunderbirdXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
+		<constructor-arg value="${ssm.xtce.file}"></constructor-arg>
+	</bean>
+
+	<bean id="packetBroker" class="org.hbird.transport.packetbroker.HummingbirdCamelPacketBroker">
+		<constructor-arg ref="thunderbirdXtceModelFactory"></constructor-arg>
+	</bean>
+
+
+	<camel:camelContext>
+		<!-- Stream the TM string in the file and send it to the console and an activemq queue -->
+		<camel:route autoStartup="{{use.test.file}}">
+<!--			<camel:from-->
+<!--				uri="stream:file?fileName={{thunderbird.tm.file}}&amp;scanStream={{scan.stream}}&amp;scanStreamDelay={{stream.delay}}" /> -->
+				<camel:from uri="file://{{thunderbird.tm.file.dir}}?noop=true" />
+				<camel:convertBodyTo type="byte[]"></camel:convertBodyTo>
+			<camel:multicast>
+				<!-- Print out to console for debugging -->
+<!--				<camel:to uri="stream:out" />-->
+				<!-- Send to packet jms queue using activemq -->
+				<camel:to uri="activemq:rawPackets?jmsMessageType=Bytes" />
+			</camel:multicast>
+		</camel:route>
+
+
+		<camel:route autoStartup="{{use.packet.broker}}">
+			<!-- Grab the packets from the message queue -->
+			<camel:from uri="activemq:rawPackets" />
+<!--			<camel:to uri="stream:out" />-->
+			<!-- convert the Strings to bitsets for the packet broker -->
+			<camel:convertBodyTo type="java.util.BitSet" />
+			<!-- split and output -->
+			<camel:split>
+				<camel:method bean="packetBroker" method="split"></camel:method>
+				<camel:choice>
+					<camel:when>
+						<camel:simple>${header.Type} == TMPacket</camel:simple>
+						<camel:to uri="activemq:topic:processedPacketsOut?jmsMessageType=Text"></camel:to>
+					</camel:when>
+					<camel:when>
+						<camel:simple>${header.Type} == TMParameter</camel:simple>
+						<camel:to uri="activemq:topic:processedParametersOut?jmsMessageType=Text"></camel:to>
+					</camel:when>
+				</camel:choice>
+			</camel:split>
+		</camel:route>
+
+	</camel:camelContext>
+
+</beans>
