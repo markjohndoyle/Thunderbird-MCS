@@ -53,7 +53,7 @@
 			<camel:convertBodyTo type="java.util.BitSet" />
 			<!-- split and output -->
 			<camel:split>
-				<camel:method bean="packetBroker" method="split"></camel:method>
+				<camel:method bean="packetBroker" method="decodeBinaryTelemetry"></camel:method>
 				<camel:choice>
 					<camel:when>
 						<camel:simple>${header.Type} == TMPacket</camel:simple>
