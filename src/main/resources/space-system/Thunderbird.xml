@@ -63,6 +63,12 @@
 				<UnitSet></UnitSet>
 <!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst">-->
 			</IntegerParameterType>
+			
+			<IntegerParameterType name="32BitUInteger" sizeInBits="32" signed="false"
+				shortDescription="32-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst">-->
+			</IntegerParameterType>
 
 		</ParameterTypeSet>
 
@@ -74,7 +80,24 @@
 			<Parameter parameterTypeRef="2BitUInteger" name="CCSDS_PKT_SEQ_FLAG" />
 			<Parameter parameterTypeRef="14BitUInteger" name="CCSDS_PKT_SEQ_COUNT" />
 			<Parameter parameterTypeRef="16BitUInteger" name="CCSDS_PKT_LENGTH" />
-			<Parameter parameterTypeRef="8BitUInteger" name="RADIO_MODULE_TEMP" />
+			<!-- Payload starts here -->
+			<Parameter parameterTypeRef="32BitUInteger" name="Air_Pressure_SCP1000" />
+			<Parameter parameterTypeRef="32BitUInteger" name="Air_Pressure_BMP" />
+			<Parameter parameterTypeRef="32BitUInteger" name="Temperature_SCP1000" />
+			<Parameter parameterTypeRef="32BitUInteger" name="Temperature_BMP" />
+			<Parameter parameterTypeRef="32BitUInteger" name="Z_Axis_Accelerometer" />
+			<Parameter parameterTypeRef="32BitUInteger" name="Battery_Voltage" />
+			<Parameter parameterTypeRef="32BitUInteger" name="IMU_Roll" />
+			<Parameter parameterTypeRef="32BitUInteger" name="IMU_Pitch" />
+			<Parameter parameterTypeRef="32BitUInteger" name="IMU_Heading" />
+			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Lock" />
+			<Parameter parameterTypeRef="32BitUInteger" name="GCS_Number_of_Sats" />
+			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Lock" />
+			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Latitude_Degrees" />
+			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Latitude_Minutes" />
+			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Longitude_Degrees" />
+			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Longitude_Minutes" />
+			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Altitude" />
 		</ParameterSet>
 
 		<ContainerSet>
@@ -99,7 +122,23 @@
 
 			<SequenceContainer name="RadioModuleTemperature" shortDescription="">
 				<EntryList>
-					<ParameterRefEntry parameterRef="RADIO_MODULE_TEMP" />
+					<ParameterRefEntry parameterRef="Air_Pressure_SCP1000" />
+					<ParameterRefEntry parameterRef="Air_Pressure_BMP" />
+					<ParameterRefEntry parameterRef="Temperature_SCP1000" />
+					<ParameterRefEntry parameterRef="Temperature_BMP" />
+					<ParameterRefEntry parameterRef="Z_Axis_Accelerometer" />
+					<ParameterRefEntry parameterRef="Battery_Voltage" />
+					<ParameterRefEntry parameterRef="IMU_Roll" />
+					<ParameterRefEntry parameterRef="IMU_Pitch" />
+					<ParameterRefEntry parameterRef="IMU_Heading" />
+					<ParameterRefEntry parameterRef="GPS_Lock" />
+					<ParameterRefEntry parameterRef="GCS_Number_of_Sats" />
+					<ParameterRefEntry parameterRef="GPS_Lock" />
+					<ParameterRefEntry parameterRef="GPS_Latitude_Degrees" />
+					<ParameterRefEntry parameterRef="GPS_Latitude_Minutes" />
+					<ParameterRefEntry parameterRef="GPS_Longitude_Degrees" />
+					<ParameterRefEntry parameterRef="GPS_Longitude_Minutes" />
+					<ParameterRefEntry parameterRef="GPS_Altitude" />
 				</EntryList>
 				<BaseContainer containerRef="TMPacketHeader">
 					<RestrictionCriteria>
