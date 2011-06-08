@@ -28,6 +28,7 @@
 		<constructor-arg ref="thunderbirdXtceModelFactory"></constructor-arg>
 	</bean>
 
+	<bean id="tmPrinter" class="org.hbird.business.analysis.TelemetryPrintout" />
 
 	<camel:camelContext>
 		<!-- Stream the TM string in the file and send it to the console and an activemq queue -->
@@ -61,7 +62,10 @@
 					</camel:when>
 					<camel:when>
 						<camel:simple>${header.Type} == TMParameter</camel:simple>
-						<camel:to uri="activemq:topic:processedParametersOut?jmsMessageType=Text"></camel:to>
+						<camel:multicast>
+							<camel:to uri="activemq:topic:processedParametersOut?jmsMessageType=Text"></camel:to>
+							<camel:bean ref="tmPrinter" method="logParameter" />
+						</camel:multicast>
 					</camel:when>
 				</camel:choice>
 			</camel:split>
