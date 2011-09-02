@@ -40,14 +40,38 @@
 <!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
 			</IntegerParameterType>
 
+			<IntegerParameterType name="5BitUInteger" sizeInBits="5" signed="false"
+				shortDescription="5-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
+			<IntegerParameterType name="6BitUInteger" sizeInBits="6" signed="false"
+				shortDescription="6-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
 			<IntegerParameterType name="8BitUInteger" sizeInBits="8" signed="false"
 				shortDescription="8-bit unsigned integer">
 				<UnitSet></UnitSet>
 <!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
 			</IntegerParameterType>
 
+			<IntegerParameterType name="9BitUInteger" sizeInBits="9" signed="false"
+				shortDescription="9-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
 			<IntegerParameterType name="11BitUInteger" sizeInBits="11" signed="false"
 				shortDescription="11-bit unsigned integer">
+				<UnitSet></UnitSet>
+<!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
+			</IntegerParameterType>
+
+			<IntegerParameterType name="12BitUInteger" sizeInBits="12" signed="false"
+				shortDescription="12-bit unsigned integer">
 				<UnitSet></UnitSet>
 <!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
 			</IntegerParameterType>
@@ -81,23 +105,23 @@
 			<Parameter parameterTypeRef="14BitUInteger" name="CCSDS_PKT_SEQ_COUNT" />
 			<Parameter parameterTypeRef="16BitUInteger" name="CCSDS_PKT_LENGTH" />
 			<!-- Payload starts here -->
-			<Parameter parameterTypeRef="32BitUInteger" name="Air_Pressure_SCP1000" />
-			<Parameter parameterTypeRef="32BitUInteger" name="Air_Pressure_BMP" />
-			<Parameter parameterTypeRef="32BitUInteger" name="Temperature_SCP1000" />
-			<Parameter parameterTypeRef="32BitUInteger" name="Temperature_BMP" />
-			<Parameter parameterTypeRef="32BitUInteger" name="Z_Axis_Accelerometer" />
-			<Parameter parameterTypeRef="32BitUInteger" name="Battery_Voltage" />
-			<Parameter parameterTypeRef="32BitUInteger" name="IMU_Roll" />
-			<Parameter parameterTypeRef="32BitUInteger" name="IMU_Pitch" />
-			<Parameter parameterTypeRef="32BitUInteger" name="IMU_Heading" />
-			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Lock" />
-			<Parameter parameterTypeRef="32BitUInteger" name="GCS_Number_of_Sats" />
-			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Lock" />
-			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Latitude_Degrees" />
-			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Latitude_Minutes" />
-			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Longitude_Degrees" />
-			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Longitude_Minutes" />
-			<Parameter parameterTypeRef="32BitUInteger" name="GPS_Altitude" />
+			<Parameter parameterTypeRef="14BitUInteger" name="Air_Pressure_SCP1000" />
+			<Parameter parameterTypeRef="14BitUInteger" name="Air_Pressure_BMP" />
+			<Parameter parameterTypeRef="12BitUInteger" name="Z_Axis_Accelerometer" />
+			<Parameter parameterTypeRef="8BitUInteger" name="Temperature_SCP1000" />
+			<Parameter parameterTypeRef="8BitUInteger" name="Temperature_BMP" />
+			<Parameter parameterTypeRef="12BitUInteger" name="GPS_Altitude" />
+			<Parameter parameterTypeRef="2BitUInteger" name="GPS_Latitude_Degrees" />
+			<Parameter parameterTypeRef="6BitUInteger" name="GPS_Latitude_Minutes" />
+			<Parameter parameterTypeRef="14BitUInteger" name="GPS_Latitude_Minutes_decimals" />
+			<Parameter parameterTypeRef="2BitUInteger" name="GPS_Longitude_Degrees" />
+			<Parameter parameterTypeRef="6BitUInteger" name="GPS_Longitude_Minutes" />
+			<Parameter parameterTypeRef="14BitUInteger" name="GPS_Longitude_Minutes_decimals" />
+			<Parameter parameterTypeRef="1BitUInteger" name="GPS_Lock" />
+			<Parameter parameterTypeRef="5BitUInteger" name="GPS_Number_of_Sats" />
+			<Parameter parameterTypeRef="9BitUInteger" name="IMU_Roll" />
+			<Parameter parameterTypeRef="8BitUInteger" name="IMU_Pitch" />
+			<Parameter parameterTypeRef="9BitUInteger" name="IMU_Heading" />
 		</ParameterSet>
 
 		<ContainerSet>
@@ -124,21 +148,21 @@
 				<EntryList>
 					<ParameterRefEntry parameterRef="Air_Pressure_SCP1000" />
 					<ParameterRefEntry parameterRef="Air_Pressure_BMP" />
+					<ParameterRefEntry parameterRef="Z_Axis_Accelerometer" />
 					<ParameterRefEntry parameterRef="Temperature_SCP1000" />
 					<ParameterRefEntry parameterRef="Temperature_BMP" />
-					<ParameterRefEntry parameterRef="Z_Axis_Accelerometer" />
-					<ParameterRefEntry parameterRef="Battery_Voltage" />
+					<ParameterRefEntry parameterRef="GPS_Altitude" />
+					<ParameterRefEntry parameterRef="GPS_Latitude_Degrees" />
+					<ParameterRefEntry parameterRef="GPS_Latitude_Minutes" />
+					<ParameterRefEntry parameterRef="GPS_Latitude_Minutes_decimals" />
+					<ParameterRefEntry parameterRef="GPS_Longitude_Degrees" />
+					<ParameterRefEntry parameterRef="GPS_Longitude_Minutes" />
+					<ParameterRefEntry parameterRef="GPS_Longitude_Minutes_decimals" />
+					<ParameterRefEntry parameterRef="GPS_Lock" />
+					<ParameterRefEntry parameterRef="GPS_Number_of_Sats" />
 					<ParameterRefEntry parameterRef="IMU_Roll" />
 					<ParameterRefEntry parameterRef="IMU_Pitch" />
 					<ParameterRefEntry parameterRef="IMU_Heading" />
-					<ParameterRefEntry parameterRef="GPS_Lock" />
-					<ParameterRefEntry parameterRef="GCS_Number_of_Sats" />
-					<ParameterRefEntry parameterRef="GPS_Lock" />
-					<ParameterRefEntry parameterRef="GPS_Latitude_Degrees" />
-					<ParameterRefEntry parameterRef="GPS_Latitude_Minutes" />
-					<ParameterRefEntry parameterRef="GPS_Longitude_Degrees" />
-					<ParameterRefEntry parameterRef="GPS_Longitude_Minutes" />
-					<ParameterRefEntry parameterRef="GPS_Altitude" />
 				</EntryList>
 				<BaseContainer containerRef="TMPacketHeader">
 					<RestrictionCriteria>
