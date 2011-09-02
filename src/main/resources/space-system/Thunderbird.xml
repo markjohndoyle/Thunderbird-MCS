@@ -23,7 +23,7 @@
 	
 		<ParameterTypeSet>
 			<IntegerParameterType name="1BitFlag" sizeInBits="1" signed="false"
-				shortDescription="1-bit Flagr">
+				shortDescription="1-bit Flag">
 				<UnitSet></UnitSet>
 <!--				<BinaryDataEncoding bitOrder="mostSignificantBitFirst" />-->
 			</IntegerParameterType>
@@ -117,7 +117,7 @@
 			<Parameter parameterTypeRef="2BitUInteger" name="GPS_Longitude_Degrees" />
 			<Parameter parameterTypeRef="6BitUInteger" name="GPS_Longitude_Minutes" />
 			<Parameter parameterTypeRef="14BitUInteger" name="GPS_Longitude_Minutes_decimals" />
-			<Parameter parameterTypeRef="1BitUInteger" name="GPS_Lock" />
+			<Parameter parameterTypeRef="1BitFlag" name="GPS_Lock" />
 			<Parameter parameterTypeRef="5BitUInteger" name="GPS_Number_of_Sats" />
 			<Parameter parameterTypeRef="9BitUInteger" name="IMU_Roll" />
 			<Parameter parameterTypeRef="8BitUInteger" name="IMU_Pitch" />
