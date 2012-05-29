@@ -25,13 +25,13 @@
         </parent>   
 
 	<properties>
-		<camel-version>2.7.1</camel-version>
-		<activemq-version>5.5.0</activemq-version>
+		<camel-version>2.9.2</camel-version>
+		<activemq-version>5.6.0</activemq-version>
 		<xbean-spring-version>3.5</xbean-spring-version>
 		<log4j-version>1.2.16</log4j-version>
 		<spring-version>3.0.5.RELEASE</spring-version>
-		<jaxb-api-version>2.1</jaxb-api-version>
-		<jaxb-impl-version>2.1.13</jaxb-impl-version>
+		<jaxb-api-version>2.2.5</jaxb-api-version>
+		<jaxb-impl-version>2.2.5.1</jaxb-impl-version>
 	</properties>
 
 	<dependencies>
@@ -43,6 +43,11 @@
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-camel</artifactId>
+			<version>${activemq-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-pool</artifactId>
 			<version>${activemq-version}</version>
 		</dependency>
 		<dependency>
@@ -81,20 +86,35 @@
 			<version>${log4j-version}</version>
 		</dependency>
 		<dependency>
+	    	<groupId>org.hbird.core</groupId>
+	    	<artifactId>commons</artifactId>
+	    	<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>org.hbird.transport</groupId>
-			<artifactId>packet-broker</artifactId>
+			<artifactId>payload-codec</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hbird.transport</groupId>
+			<artifactId>protocols</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hbird.core</groupId>
 			<artifactId>xtce</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>org.hbird.core</groupId>
+			<artifactId>space-system-publisher</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+<!--		<dependency>
 			<groupId>org.hbird.business</groupId>
 			<artifactId>analysis</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>

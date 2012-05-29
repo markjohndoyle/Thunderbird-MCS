@@ -5,54 +5,96 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        					   http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<!--Config property variables for Camel -->
-	<bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
-		<property name="location" value="classpath:config/configuration.properties" />
-	</bean>
-	<!-- For Spring -->
+	
+	<!-- For Spring properties -->
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:config/configuration.properties">
-		</property>
+		<property name="location" value="classpath:META-INF/config/configuration.properties"/>
+	</bean>
+	
+	<import resource="activemq.xml"/>
+	<import resource="activemq-egse.xml"/>
+	
+	<!-- The xtce space system model factory. Creates the model given an xtce xml file -->
+	<bean id="ssmodelFactory" class="org.hbird.core.xtce.XtceSpaceSystemModelFactory">
+		<constructor-arg value="${thunderbird.xtce.file}"></constructor-arg>
+	</bean>
+	
+	<!-- The actual mode produced by the factory -->
+	<bean id="ssmodel" factory-bean="ssmodelFactory" factory-method="createSpaceSystemModel">
+	</bean>
+	
+	<!-- Model publisher. -->
+	<bean id="publisher" class="org.hbird.core.spacesystempublisher.publishing.InMemorySpaceSystemPublisher">
+		<property name="model" ref="ssmodel"></property>
+	</bean>
+	
+	<!--  Use the factory to get data required by the payload codec -->
+	<bean id="parameterGroups" factory-bean="publisher" factory-method="getParameterGroups"></bean>
+	<bean id="encodings" factory-bean="publisher" factory-method="getEncodings"></bean>
+	<bean id="restrictions" factory-bean="publisher" factory-method="getRestrictions"></bean>
+	
+	
+	
+	<bean id="frameDecoder" class="org.hbird.transport.protocols.ccsds.transferframe.CcsdsFrameDecoder">
+		<constructor-arg><value>30</value></constructor-arg>
+        <constructor-arg><value>false</value></constructor-arg>
+        <constructor-arg><value>false</value></constructor-arg>
+	</bean>
+	
+	<bean id="packetDecoder" class="org.hbird.transport.protocols.ccsds.spacepacket.CcsdsPacketDecoder" />
+	
+	
+	<bean id="payload-codec" class="org.hbird.transport.payloadcodec.InMemoryPayloadCodec">
+		<constructor-arg ref="parameterGroups"></constructor-arg>
+		<constructor-arg ref="encodings"></constructor-arg>
+		<constructor-arg ref="restrictions"></constructor-arg>
 	</bean>
 
-	<!--Set up the active mq broker bean -->
-	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-		<property name="brokerURL" value="${activemq.broker.url}" />
-	</bean>
-
-	<bean id="thunderbirdXtceModelFactory" class="org.hbird.transport.xtce.XtceModelFactory">
-		<constructor-arg value="${ssm.xtce.file}"></constructor-arg>
-	</bean>
-
-	<bean id="packetBroker" class="org.hbird.transport.packetbroker.HummingbirdCamelPacketBroker">
-		<constructor-arg ref="thunderbirdXtceModelFactory"></constructor-arg>
-	</bean>
-
-	<bean id="tmPrinter" class="org.hbird.business.analysis.TelemetryPrintout" />
-
-	<camel:camelContext>
-		<!-- Stream the TM string in the file and send it to the console and an activemq queue -->
-		<camel:route autoStartup="{{use.test.file}}">
-<!--			<camel:from-->
-<!--				uri="stream:file?fileName={{thunderbird.tm.file}}&amp;scanStream={{scan.stream}}&amp;scanStreamDelay={{stream.delay}}" /> -->
-				<camel:from uri="file://{{thunderbird.tm.file.dir}}?noop=true" />
-				<camel:convertBodyTo type="byte[]"></camel:convertBodyTo>
-			<camel:multicast>
-				<!-- Print out to console for debugging -->
-<!--				<camel:to uri="stream:out" />-->
-				<!-- Send to packet jms queue using activemq -->
-				<camel:to uri="activemq:rawPackets?jmsMessageType=Bytes" />
-			</camel:multicast>
+	<!-- <bean id="tmPrinter" class="org.hbird.business.analysis.TelemetryPrintout" /> -->
+	
+	
+	<!-- THE ROUTES - The core wiring of the system -->
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+		<camel:route>
+			<camel:from uri="activemq:requestParameterGroups"></camel:from>
+			<camel:to uri="bean:publisher?method=getParameterGroupList"></camel:to>
+		</camel:route>
+		
+		<camel:route>
+			<camel:from uri="activemq:requestCommands"></camel:from>
+			<camel:to uri="bean:publisher?method=getCommandList"></camel:to>
 		</camel:route>
 
+		<!-- This route reads any files in the tmp/strand folder, converts them to byte arrays and send them over -->
+		<!-- UDP to localhost:5150 -->
+		<camel:route>
+			<camel:from uri="activemq-egse:slipstream"/>
+			<camel:to uri="frameDecoder" />
+			<camel:to uri="packetDecoder" />
+			<camel:split>
+				<camel:simple>${body}</camel:simple>
+				<convertBodyTo type="org.hbird.core.commons.data.GenericPayload"/>
+				<camel:to uri="activemq:packetPayloads" />
+			</camel:split>
+		</camel:route>
+		
+		<camel:route>
+			<camel:from uri="activemq:packetPayloads" />
+			<camel:to uri="bean:payload-codec?method=decode" />
+			<camel:to uri="activemq:topic:parameterGroups" />
+		</camel:route>
+	</camelContext>
 
+<!-- 
+	<camel:camelContext>
+	
 		<camel:route autoStartup="{{use.packet.broker}}">
-			<!-- Grab the packets from the message queue -->
+			Grab the packets from the message queue
 			<camel:from uri="activemq:rawPackets" />
-<!--			<camel:to uri="stream:out" />-->
-			<!-- convert the Strings to bitsets for the packet broker -->
+			<camel:to uri="stream:out" />
+			convert the Strings to bitsets for the packet broker
 			<camel:convertBodyTo type="java.util.BitSet" />
-			<!-- split and output -->
+			split and output
 			<camel:split>
 				<camel:method bean="packetBroker" method="decodeBinaryTelemetry"></camel:method>
 				<camel:choice>
@@ -72,5 +114,5 @@
 		</camel:route>
 
 	</camel:camelContext>
-
+ -->
 </beans>

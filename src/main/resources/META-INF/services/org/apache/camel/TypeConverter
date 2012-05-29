@@ -1,1 +1,2 @@
-org.hbird.transport.commons.util.typeconverters
+org.hbird.core.commons.util.typeconverters
+org.hbird.transport.protocols.ccsds.transferframe.typeconverters

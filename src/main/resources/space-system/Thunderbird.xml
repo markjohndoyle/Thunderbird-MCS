@@ -125,13 +125,13 @@
 		</ParameterSet>
 
 		<ContainerSet>
-			<SequenceContainer name="TMPacket" shortDescription="THUNDERBIRD TM Packet">
+	<!-- 		<SequenceContainer name="TMPacket" shortDescription="THUNDERBIRD TM Packet">
 				<EntryList>
 					<ContainerRefEntry containerRef="TMPacketHeader" />
 				</EntryList>
-			</SequenceContainer>
+			</SequenceContainer> -->
 
-			<SequenceContainer name="TMPacketHeader" shortDescription="THUNDERBIRD TM Packet Header"
+		<!-- 	<SequenceContainer name="TMPacketHeader" shortDescription="THUNDERBIRD TM Packet Header"
 				abstract="true">
 				<EntryList>
 					<ParameterRefEntry parameterRef="CCSDS_PKT_VERSION_NUM" />
@@ -142,7 +142,7 @@
 					<ParameterRefEntry parameterRef="CCSDS_PKT_SEQ_COUNT" />
 					<ParameterRefEntry parameterRef="CCSDS_PKT_LENGTH" />
 				</EntryList>
-			</SequenceContainer>
+			</SequenceContainer> -->
 
 			<SequenceContainer name="RadioModuleTemperature" shortDescription="">
 				<EntryList>
@@ -164,7 +164,7 @@
 					<ParameterRefEntry parameterRef="IMU_Pitch" />
 					<ParameterRefEntry parameterRef="IMU_Heading" />
 				</EntryList>
-				<BaseContainer containerRef="TMPacketHeader">
+				<BaseContainer containerRef="HEADER">
 					<RestrictionCriteria>
 						<ComparisonList>
 							<Comparison parameterRef="CCSDS_PKT_APID" value="1" />
