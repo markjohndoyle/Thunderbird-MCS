@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Configures the MCS using camel as a routing engine -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:camel="http://camel.apache.org/schema/spring"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       					   http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	   xmlns:camel="http://camel.apache.org/schema/spring"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	   					   http://www.springframework.org/schema/beans/spring-beans.xsd
+	   					   http://www.springframework.org/schema/context 
+	   					   http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	   					   http://www.springframework.org/schema/data/mongo 
+	   					   http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+	   					   http://camel.apache.org/schema/spring 
+	   					   http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	
-	<!-- For Spring properties -->
-	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:META-INF/config/configuration.properties"/>
-	</bean>
-	
+	<import resource="spring-config.xml"/>
 	<import resource="activemq.xml"/>
 	<import resource="activemq-egse.xml"/>
+	
 	
 	<!-- The xtce space system model factory. Creates the model given an xtce xml file -->
 	<bean id="ssmodelFactory" class="org.hbird.core.xtce.XtceSpaceSystemModelFactory">
@@ -49,9 +54,33 @@
 		<constructor-arg ref="encodings"></constructor-arg>
 		<constructor-arg ref="restrictions"></constructor-arg>
 	</bean>
-
-	<!-- <bean id="tmPrinter" class="org.hbird.business.analysis.TelemetryPrintout" /> -->
 	
+	
+	
+	<context:component-scan base-package="org.hbird.application.parameterarchive.mongodb" />
+
+	<mongo:mongo host="${mongodb.host}" port="${mongodb.port}" />
+
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongo" />
+		<constructor-arg name="databaseName" value="${mongodb.parc.db.name}" />
+	</bean>
+	
+	<mongo:repositories 
+		base-package="org.hbird.application.parameterarchive.repositories" mongo-template-ref="mongoTemplate">
+	</mongo:repositories>
+
+	<bean id="parameterArchiver" class="org.hbird.application.parameterarchive.mongodb.SimpleMongoParameterArchiver">
+		<property name="collection" value="${mongodb.parc.db.collection.name}"></property>
+	</bean>
+
+	<bean id="parameterRetriever" class="org.hbird.application.parameterarchive.mongodb.SimpleMongoParameterRetriever">
+		<property name="collection" value="${mongodb.parc.db.collection.name}"></property>
+	</bean>
+	
+	
+	<!-- To translate any MongoExceptions thrown in @Repository annotated classes -->
+	<context:annotation-config />
 	
 	<!-- THE ROUTES - The core wiring of the system -->
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
@@ -64,9 +93,22 @@
 			<camel:from uri="activemq:requestCommands"></camel:from>
 			<camel:to uri="bean:publisher?method=getCommandList"></camel:to>
 		</camel:route>
-
-		<!-- This route reads any files in the tmp/strand folder, converts them to byte arrays and send them over -->
-		<!-- UDP to localhost:5150 -->
+		
+		<camel:route>
+			<camel:from uri="activemq:requestArchivedParametersByQualifiedName"></camel:from>
+			<camel:to uri="bean:parameterRetriever?method=findParameters"></camel:to>
+		</camel:route>
+		
+		<camel:route>
+			<camel:from uri="activemq:requestArchivedParametersByReceivedTime"></camel:from>
+			<camel:to uri="bean:parameterRetriever?method=findParameters(${body[0]},${body[1]})"></camel:to>
+		</camel:route>
+		
+		<camel:route>
+			<camel:from uri="activemq:findByReceivedTimeBetween"></camel:from>
+			<camel:to uri="bean:parameterRetriever?method=findByReceivedTimeBetween(${body[0]},${body[1]},${body[2]},${body[3]})"></camel:to>
+		</camel:route>
+		
 		<camel:route>
 			<camel:from uri="activemq-egse:slipstream"/>
 			<camel:to uri="frameDecoder" />
@@ -81,38 +123,13 @@
 		<camel:route>
 			<camel:from uri="activemq:packetPayloads" />
 			<camel:to uri="bean:payload-codec?method=decode" />
-			<camel:to uri="activemq:topic:parameterGroups" />
+			<camel:to uri="activemq:parameterGroups" />
+		</camel:route>
+		
+		<camel:route>
+			<camel:from uri="activemq:parameterGroups"></camel:from>
+			<camel:to uri="bean:parameterArchiver?method=archiveParameter"></camel:to>
 		</camel:route>
 	</camelContext>
-
-<!-- 
-	<camel:camelContext>
 	
-		<camel:route autoStartup="{{use.packet.broker}}">
-			Grab the packets from the message queue
-			<camel:from uri="activemq:rawPackets" />
-			<camel:to uri="stream:out" />
-			convert the Strings to bitsets for the packet broker
-			<camel:convertBodyTo type="java.util.BitSet" />
-			split and output
-			<camel:split>
-				<camel:method bean="packetBroker" method="decodeBinaryTelemetry"></camel:method>
-				<camel:choice>
-					<camel:when>
-						<camel:simple>${header.Type} == TMPacket</camel:simple>
-						<camel:to uri="activemq:topic:processedPacketsOut?jmsMessageType=Text"></camel:to>
-					</camel:when>
-					<camel:when>
-						<camel:simple>${header.Type} == TMParameter</camel:simple>
-						<camel:multicast>
-							<camel:to uri="activemq:topic:processedParametersOut?jmsMessageType=Text"></camel:to>
-							<camel:bean ref="tmPrinter" method="logParameter" />
-						</camel:multicast>
-					</camel:when>
-				</camel:choice>
-			</camel:split>
-		</camel:route>
-
-	</camel:camelContext>
- -->
 </beans>
