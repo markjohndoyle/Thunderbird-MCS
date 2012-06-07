@@ -123,11 +123,11 @@
 		<camel:route>
 			<camel:from uri="activemq:packetPayloads" />
 			<camel:to uri="bean:payload-codec?method=decode" />
-			<camel:to uri="activemq:parameterGroups" />
+			<camel:to uri="activemq:topic:parameterGroups" />
 		</camel:route>
 		
 		<camel:route>
-			<camel:from uri="activemq:parameterGroups"></camel:from>
+			<camel:from uri="activemq:topic:parameterGroups?concurrentConsumers=1&amp;maxConcurrentConsumers=1"></camel:from>
 			<camel:to uri="bean:parameterArchiver?method=archiveParameter"></camel:to>
 		</camel:route>
 	</camelContext>
