@@ -110,7 +110,9 @@
 		</camel:route>
 		
 		<camel:route>
-			<camel:from uri="activemq-egse:slipstream"/>
+<!-- 			<camel:from uri="activemq-egse:slipstream"/> -->
+			<camel:from uri="file:///tmp/strand/"/>
+			<camel:convertBodyTo type="byte[]" />
 			<camel:to uri="frameDecoder" />
 			<camel:to uri="packetDecoder" />
 			<camel:split>
@@ -129,6 +131,12 @@
 		<camel:route>
 			<camel:from uri="activemq:parameterGroups"></camel:from>
 			<camel:to uri="bean:parameterArchiver?method=archiveParameter"></camel:to>
+		</camel:route>
+		
+		<camel:route>
+			<camel:from uri="activemq:topic:parameterGroups" />
+			<camel:marshal><camel:json/></camel:marshal>		
+			<camel:to uri="netty:udp://localhost:11000" />
 		</camel:route>
 	</camelContext>
 	
