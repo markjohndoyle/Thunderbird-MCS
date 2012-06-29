@@ -149,7 +149,7 @@
 			<camel:split>
 				<camel:method ref="pgToTransformTmSplitter" method="splitBody"></camel:method>
 				<camel:marshal><camel:json library="Jackson"/></camel:marshal>
-				<camel:to uri="netty:udp://192.168.0.255:15478?sync=false" />
+				<camel:to uri="mina:udp://192.168.0.255:15478?sync=false" />
 			</camel:split>
 		</camel:route>
 	</camelContext>
