@@ -13,7 +13,7 @@
 
 	<groupId>org.hbird.thunderbird</groupId>
 	<artifactId>thunderbird-mcs</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>Thunderbird Mission Control System</name>
