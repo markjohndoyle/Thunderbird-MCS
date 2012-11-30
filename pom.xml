@@ -17,6 +17,12 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>Thunderbird Mission Control System</name>
+	
+    <parent>                                                                                                                                                                                                                             
+		<groupId>org.sonatype.oss</groupId>                                                                                                                                                                                          
+		<artifactId>oss-parent</artifactId>                                                                                                                                                                                          
+		<version>7</version>                                                                                                                                                                                                         
+	</parent>   
 
   <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
