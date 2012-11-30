@@ -108,8 +108,8 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>strand</Bundle-SymbolicName>
-						<Private-Package>foo.*</Private-Package>
+						<Bundle-SymbolicName>thunderbird</Bundle-SymbolicName>
+						<Private-Package></Private-Package>
 						<Import-Package>
 							*,
 							org.apache.camel.osgi,
