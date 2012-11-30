@@ -16,114 +16,67 @@
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>Thunderbird MCS</name>
+	<name>Thunderbird Mission Control System</name>
 
-        <parent>                                                                                                                                                                                                                             
-                <groupId>org.sonatype.oss</groupId>                                                                                                                                                                                          
-                <artifactId>oss-parent</artifactId>                                                                                                                                                                                          
-                <version>7</version>                                                                                                                                                                                                         
-        </parent>   
-
-	<properties>
-		<camel-version>2.9.2</camel-version>
-		<activemq-version>5.6.0</activemq-version>
-		<xbean-spring-version>3.5</xbean-spring-version>
-		<log4j-version>1.2.16</log4j-version>
-		<spring-version>3.0.5.RELEASE</spring-version>
-		<jaxb-api-version>2.2.5</jaxb-api-version>
-		<jaxb-impl-version>2.2.5.1</jaxb-impl-version>
+  <properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<hbird-version>0.0.1-SNAPSHOT</hbird-version>
+		<camel.version>2.10.1</camel.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-core</artifactId>
-			<version>${activemq-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-camel</artifactId>
-			<version>${activemq-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.activemq</groupId>
-			<artifactId>activemq-pool</artifactId>
-			<version>${activemq-version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
-			<version>${camel-version}</version>
+			<version>${camel.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jms</artifactId>
-			<version>${camel-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-			<version>${camel-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-stream</artifactId>
-			<version>${camel-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.xbean</groupId>
-			<artifactId>xbean-spring</artifactId>
-			<version>${xbean-spring-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j-version}</version>
-		</dependency>
-		<dependency>
-	    	<groupId>org.hbird.core</groupId>
-	    	<artifactId>commons</artifactId>
-	    	<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hbird.transport</groupId>
-			<artifactId>payload-codec</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<artifactId>camel-blueprint</artifactId>
+			<version>${camel.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hbird.transport</groupId>
 			<artifactId>protocols</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${hbird-version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.6</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.hbird.core</groupId>
-			<artifactId>xtce</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.6</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.hbird.core</groupId>
-			<artifactId>space-system-publisher</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-<!--		<dependency>
-			<groupId>org.hbird.business</groupId>
-			<artifactId>analysis</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>-->
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>1.5.4</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.6</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.hbird.application</groupId>
-			<artifactId>parameter-archive</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- testing -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test-blueprint</artifactId>
+			<version>${camel.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -134,42 +87,43 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.5.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
 			</plugin>
 
-			<!-- allows the route to be ran via 'mvn camel:run' -->
+			<!-- to generate the MANIFEST-FILE of the bundle -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>strand</Bundle-SymbolicName>
+						<Private-Package>foo.*</Private-Package>
+						<Import-Package>
+							*,
+							org.apache.camel.osgi,
+							org.slf4j,
+						</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<!-- to run the example using mvn camel:run -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-maven-plugin</artifactId>
-				<version>${camel-version}</version>
+				<version>${camel.version}</version>
+				<configuration>
+					<useBlueprint>true</useBlueprint>
+				</configuration>
 			</plugin>
 
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>jdk1.6</id>
-			<activation>
-				<jdk>1.6</jdk>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>javax.xml.bind</groupId>
-					<artifactId>jaxb-api</artifactId>
-					<version>${jaxb-api-version}</version>
-				</dependency>
-				<dependency>
-					<groupId>com.sun.xml.bind</groupId>
-					<artifactId>jaxb-impl</artifactId>
-					<version>${jaxb-impl-version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-	</profiles>
 
 </project>

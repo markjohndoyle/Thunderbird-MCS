@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/blueprint"
+	xsi:schemaLocation="
+       http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+       http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+	<!-- Route utility beans -->
+
+	<camelContext id="thunderbirdCamelContext" trace="false"
+		xmlns="http://camel.apache.org/schema/blueprint">
+		<!-- This endpoint allows service based pojos to send commands into the 
+			system for routes. -->
+		<endpoint id="commandSenderEndpoint" uri="activemq:sendCommands"
+			pattern="InOnly" />
+
+		<!-- This endpoint allows service based pojos to send parameter archiver 
+			queries to routes. -->
+		<endpoint id="parameterArchiveQueriesEndpoint" uri="activemq:parameterArchiveQueries"
+			pattern="InOut" />
+
+
+		<camel:route id="parameterGroupInput" startupOrder="10">
+			<from uri="activemq:parameterGroups" />
+			<camel:multicast>
+				<to uri="activemq:topic:parameterGroupsOut" />
+				<camel:split>
+					<camel:simple>${body.getAllParametersAsList()}</camel:simple>
+					<to uri="seda:parametersOut" />
+				</camel:split>
+			</camel:multicast>
+		</camel:route>
+
+		<route id="tmRoute" startupOrder="2">
+			<from uri="activemq:slipstream" />
+			<to uri="bean:frameDecoder" />
+			<to uri="bean:packetDecoder" />
+			<to uri="bean:payloadCodec" />
+			<camel:multicast>
+				<to uri="activemq:topic:parameterGroupsOut" />
+				<camel:split>
+					<camel:simple>${body.getAllParametersAsList()}</camel:simple>
+					<to uri="seda:parametersOut" />
+				</camel:split>
+			</camel:multicast>
+		</route>
+
+		<route id="parameterArchivingRoute" autoStartup="false">
+			<from uri="seda:parametersOut" />
+			<to
+				uri="mongodb:hbirdMongo?database=hbird&amp;collection=parameters&amp;operation=insert" />
+		</route>
+
+		<route id="parameterArchiveQueryRoute">
+			<from uri="activemq:parameterArchiveQueries" />
+			<setExchangePattern pattern="InOut" />
+			<to
+				uri="mongodb:hbirdMongo?database=hbird&amp;collection=parameters&amp;operation=findAll" />
+		</route>
+
+		<route id="commandAccepting" startupOrder="11">
+			<from ref="commandSenderEndpoint" />
+			<to uri="bean:payloadCodec?method=encodeToGenericPayload" />
+			<camel:setBody>
+				<camel:simple>${body.payload}</camel:simple>
+			</camel:setBody>
+			<!-- <to uri="mina2:tcp://127.0.0.1:29991?codec=#strandCodec" />
+			<to uri="bean:payloadCodec?method=decode" /> -->
+			<!-- FIXME this needs to go to the serial port! -->
+		</route>
+
+		<!-- Useful to see wire tapped messages on the console -->
+		<route id="sysoWiretaps">
+			<from uri="seda:tappedForDebug"></from>
+			<to uri="stream:out"></to>
+		</route>
+
+	</camelContext>
+
+</blueprint>
